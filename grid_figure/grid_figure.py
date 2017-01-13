@@ -46,7 +46,7 @@ class GridFigure(object):
                     "index must be an integer or a sequence of two integers.")
             my_index = my_row * self.n_columns + my_column
         elif isinstance(index, int):
-            my_row = index / self.n_columns
+            my_row = index // self.n_columns
             my_column = index % self.n_columns
             my_index = index
         else:
