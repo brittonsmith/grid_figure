@@ -1,3 +1,4 @@
+import numpy as np
 from matplotlib import pyplot
 
 class GridFigure(object):
@@ -5,7 +6,7 @@ class GridFigure(object):
                  top_buffer=0.1, bottom_buffer=0.1,
                  left_buffer=0.1, right_buffer=0.1,
                  vertical_buffer=0.05, horizontal_buffer=0.05,
-                 figsize=(8, 8)):
+                 square=False, figsize=(8, 8)):
 
         self.top_buffer = top_buffer
         self.bottom_buffer = bottom_buffer
@@ -25,7 +26,7 @@ class GridFigure(object):
             self.columns = [1.] * columns
         self.n_columns = len(self.columns)
         self.n_panels = self.n_rows * self.n_columns
-        
+
         self.panel_height = (1.0 - self.top_buffer - self.bottom_buffer -
                              ((self.n_rows-1)*self.vertical_buffer)) / \
                              sum(self.rows)
@@ -33,8 +34,39 @@ class GridFigure(object):
                             ((self.n_columns-1)*self.horizontal_buffer)) / \
                             sum(self.columns)
 
+        self.square = square
+        self.figsize = figsize
+        if square:
+            pratio = figsize[1] / figsize[0]
+            panel_length = min(self.panel_width,
+                               pratio * self.panel_height)
+            self.panel_width = panel_length
+            self.panel_height = panel_length / pratio
+
         self.figure = pyplot.figure(figsize=figsize)
         self.panels = [None]*self.n_panels
+
+    def add_cax(self, my_axes, side, buffer=0.02,
+                length=0.95, width=0.05):
+        my_pos = np.array(my_axes.get_position())
+
+        if side == "right":
+            clength = length * self.panel_height
+            left = my_pos[1][0] + buffer
+            bottom = my_pos[0][1] + (self.panel_height - clength) / 2
+            cwidth = width * self.panel_width
+            cheight = clength
+        elif side == "bottom":
+            clength = length * self.panel_width
+            cwidth = clength
+            left = my_pos[0][0] + (self.panel_width - clength) / 2
+            cheight = width * self.panel_height
+            bottom = my_pos[0][1] - self.figsize[1] / self.figsize[0] * buffer
+        else:
+            raise NotImplementedError
+
+        my_cax = self.figure.add_axes((left, bottom, cwidth, cheight))
+        return my_cax
 
     def _get_index(self, index):
         if (isinstance(index, tuple) or isinstance(index, list)) \
@@ -72,6 +104,7 @@ class GridFigure(object):
                 (left_side, bottom_side, 
                  self.columns[my_column] * self.panel_width, 
                  self.rows[my_row] * self.panel_height))
+
             self.panels[my_index] = my_axes
 
         return self.panels[my_index]
