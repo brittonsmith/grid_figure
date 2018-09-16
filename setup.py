@@ -1,12 +1,12 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 
 setup(name="grid_figure",
       version="1.0",
       description="A utility to set up matplotlib axes for multi-panel plots.",
       author="Britton Smith",
       author_email="brittonsmith@gmail.com",
-      license="BSD",
-      url="http://bitbucket.org/brittonsmith/grid_figure",
+      license="BSD 3-Clause",
+      url="https://github.com/brittonsmith/grid_figure",
       packages=["grid_figure"],
       classifiers=[
           "Development Status :: 2 - Pre-Alpha",
@@ -19,4 +19,8 @@ setup(name="grid_figure",
           "Programming Language :: Python",
           "Topic :: Utilities",
           ],
-      )
+      install_requires=[
+          'matplotlib',
+          'numpy'
+      ]
+)
