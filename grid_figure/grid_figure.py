@@ -124,6 +124,26 @@ class GridFigure(object):
 
         return self.panels[my_index]
 
+    @property
+    def top_axes(self):
+        for i in range(self.n_columns):
+            yield self[0, i]
+
+    @property
+    def bottom_axes(self):
+        for i in range(self.n_columns):
+            yield self[self.n_rows-1, i]
+
+    @property
+    def left_axes(self):
+        for i in range(self.n_rows):
+            yield self[i, 0]
+
+    @property
+    def right_axes(self):
+        for i in range(self.n_rows):
+            yield self[i, self.n_columns-1]
+
     def __delitem__(self, index):
         my_row, my_column, my_index = self._get_index(index)
         self.panels[my_index] = None
