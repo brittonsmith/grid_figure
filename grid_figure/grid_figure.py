@@ -135,6 +135,14 @@ class GridFigure(object):
             yield self[self.n_rows-1, i]
 
     @property
+    def middle_axes(self):
+        if self.n_rows < 3:
+            raise RuntimeError(f"No middle axes with {self.n_rows} rows.")
+        for i in range(1, self.n_rows-1):
+            for j in range(self.n_columns):
+                yield self[i, j]
+
+    @property
     def left_axes(self):
         for i in range(self.n_rows):
             yield self[i, 0]
@@ -143,6 +151,14 @@ class GridFigure(object):
     def right_axes(self):
         for i in range(self.n_rows):
             yield self[i, self.n_columns-1]
+
+    @property
+    def center_axes(self):
+        if self.n_columns < 3:
+            raise RuntimeError(f"No center axes with {self.n_columns} columns.")
+        for i in range(self.n_rows):
+            for j in range(1, self.n_columns-1):
+                yield self[i, j]
 
     def __delitem__(self, index):
         my_row, my_column, my_index = self._get_index(index)
