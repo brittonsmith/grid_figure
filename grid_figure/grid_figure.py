@@ -49,15 +49,34 @@ class GridFigure(object):
                             ((self.n_columns-1)*self.horizontal_buffer)) / \
                             sum(self.columns)
 
-        self.square = square
-        self.figsize = figsize
         if square:
-            pratio = figsize[1] / figsize[0]
-            panel_length = min(self.panel_width,
-                               pratio * self.panel_height)
-            self.panel_width = panel_length
-            self.panel_height = panel_length / pratio
 
+            if None in figsize:
+                if figsize == (None, None):
+                    raise ValueError("One figsize value must not be None.")
+
+                panel_length = min(self.panel_height, self.panel_width)
+                fig_width = self.left_buffer + self.right_buffer + \
+                  (self.n_columns - 1) * self.horizontal_buffer + \
+                  self.n_columns * panel_length
+                fig_height = self.top_buffer + self.bottom_buffer + \
+                  (self.n_rows - 1) * self.vertical_buffer + \
+                  self.n_rows * panel_length
+                fratio = fig_height / fig_width
+
+                if figsize[0] is None:
+                    figsize = (figsize[1] / fratio, figsize[1])
+                else:
+                    figsize = (figsize[0], figsize[0] * fratio)
+
+            else:
+                pratio = figsize[1] / figsize[0]
+                panel_length = min(self.panel_width,
+                                   pratio * self.panel_height)
+                self.panel_width = panel_length
+                self.panel_height = panel_length / pratio
+
+        self.figsize = figsize
         self.figure = pyplot.figure(figsize=figsize)
         self.panels = [None]*self.n_panels
 
@@ -65,7 +84,13 @@ class GridFigure(object):
                 length=0.95, width=0.05):
         my_pos = np.array(my_axes.get_position())
 
-        if side == "right":
+        if side == "left":
+            clength = length * self.panel_height
+            left = my_pos[0][0] - (width * self.panel_width) - buffer
+            bottom = my_pos[0][1] + (self.panel_height - clength) / 2
+            cwidth = width * self.panel_width
+            cheight = clength
+        elif side == "right":
             clength = length * self.panel_height
             left = my_pos[1][0] + buffer
             bottom = my_pos[0][1] + (self.panel_height - clength) / 2
