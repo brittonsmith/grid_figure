@@ -69,6 +69,8 @@ class GridFigure(object):
                 else:
                     figsize = (figsize[0], figsize[0] * fratio)
 
+                print (f"Figsize: {figsize}.")
+
             else:
                 pratio = figsize[1] / figsize[0]
                 panel_length = min(self.panel_width,
@@ -101,7 +103,13 @@ class GridFigure(object):
             cwidth = clength
             left = my_pos[0][0] + (self.panel_width - clength) / 2
             cheight = width * self.panel_height
-            bottom = my_pos[0][1] - self.figsize[1] / self.figsize[0] * buffer
+            bottom = my_pos[0][1] - cheight - self.figsize[1] / self.figsize[0] * buffer
+        elif side == "top":
+            clength = length * self.panel_width
+            cwidth = clength
+            left = my_pos[0][0] + (self.panel_width - clength) / 2
+            cheight = width * self.panel_height
+            bottom = my_pos[1][1] + self.figsize[1] / self.figsize[0] * buffer
         else:
             raise NotImplementedError
 
